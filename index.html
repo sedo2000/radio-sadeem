@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إذاعة سديم - للقرآن الكريم</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            /* منع التحديد العشوائي في الهاتف */
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Abstract Animated Background */
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            animation: float 15s infinite ease-in-out;
+            z-index: -1;
+        }
+        .blob-1 { top: 0%; right: -20%; width: 300px; height: 300px; background: #059669; animation-delay: 0s; }
+        .blob-2 { bottom: 0%; left: -20%; width: 250px; height: 250px; background: #0ea5e9; animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, 20px) scale(1.05); }
+        }
+
+        /* Mobile Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Image Avatar Glow */
+        .avatar-glow {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            border: 2px solid rgba(52, 211, 153, 0.4);
+            transition: all 0.4s ease;
+        }
+        .is-playing .avatar-glow {
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.7);
+            border-color: #34d399;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(52, 211, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+
+        /* Audio Visualizer (Compact) */
+        .visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            height: 30px;
+        }
+
+        .bar {
+            width: 3px;
+            height: 4px;
+            background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+            border-radius: 3px;
+            transition: height 0.2s ease;
+        }
+
+        .is-playing .bar { animation: bounce 1.2s ease-in-out infinite; }
+        .bar:nth-child(1) { animation-delay: 0.1s; height: 8px; }
+        .bar:nth-child(2) { animation-delay: 0.4s; height: 16px; }
+        .bar:nth-child(3) { animation-delay: 0.2s; height: 25px; }
+        .bar:nth-child(4) { animation-delay: 0.5s; height: 12px; }
+        .bar:nth-child(5) { animation-delay: 0.3s; height: 6px; }
+
+        @keyframes bounce {
+            0%, 100% { height: 4px; }
+            50% { height: 25px; }
+        }
+
+        /* Mobile-Friendly Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #34d399;
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+        }
+
+        /* Select Dropdown Styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2310b981%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: left 1rem top 50%;
+            background-size: 0.65rem auto;
+        }
+        select option { background-color: #0f172a; color: #fff; }
+
+        /* Glowing Play Button */
+        .play-btn-glow {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+        .play-btn-glow:active {
+            transform: scale(0.95);
+        }
+        .is-playing .play-btn-glow {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #34d399; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- Animated Background Blobs -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
+    <!-- Mobile Sized Container (Max Width 380px) -->
+    <div class="w-full max-w-[380px] mx-auto relative z-10">
+        
+        <!-- Main Application Card -->
+        <div class="glass-card rounded-[2.5rem] p-5 relative overflow-hidden flex flex-col items-center shadow-2xl border-t border-white/10" id="mainContainer">
+            
+            <!-- Top Bar: Clock & Imsakia -->
+            <div class="w-full flex justify-between items-center mb-2">
+                <button id="openImsakiaBtn" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-bold py-1.5 px-3 rounded-full border border-emerald-500/20 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-moon"></i> إمساكية
+                </button>
+                <div class="bg-black/30 backdrop-blur-md border border-white/5 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-inner">
+                    <i class="fa-regular fa-clock text-emerald-400 text-[10px]"></i>
+                    <span id="baghdadClock" class="text-[11px] font-bold tracking-wider font-mono">00:00:00</span>
+                    <span class="text-[9px] text-gray-500">بغداد</span>
+                </div>
+            </div>
+
+            <!-- Radio Title (Sadeem) -->
+            <div class="mt-4 mb-5 text-center w-full">
+                <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-100 tracking-wide drop-shadow-md mb-0.5">
+                    إذاعة سديم
+                </h1>
+                <p class="text-[9px] text-emerald-200/50 tracking-[0.2em] uppercase">Sadeem Radio</p>
+            </div>
+
+            <!-- Reciter Image & Visualizer -->
+            <div class="text-center mb-5">
+                <div class="relative inline-block mb-3">
+                    <img id="reciterImg" src="https://ui-avatars.com/api/?name=قرآن&background=059669&color=fff&size=256" alt="صورة القارئ" class="w-24 h-24 rounded-full object-cover avatar-glow mx-auto">
+                    <div class="absolute -bottom-1 -right-1 bg-slate-800 rounded-full p-1.5 border border-emerald-500/40">
+                        <i class="fa-solid fa-microphone-lines text-emerald-400 text-[10px]"></i>
+                    </div>
+                </div>
+                <h2 class="text-lg font-bold text-white mb-1" id="reciterNameDisplay">مشاري العفاسي</h2>
+                
+                <div class="visualizer mt-1" id="visualizer">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+            </div>
+
+            <!-- Selects (Compact Version) -->
+            <div class="w-full space-y-3 mb-6">
+                <!-- Reciter Selection -->
+                <div class="relative">
+                    <label class="block text-[10px] font-bold text-emerald-400/80 mb-1 ms-1 uppercase tracking-wider">القارئ</label>
+                    <select id="reciterSelect" class="w-full bg-black/30 border border-white/10 text-white text-[13px] rounded-2xl focus:ring-1 focus:ring-emerald-500 block px-3 py-2.5 outline-none transition-all">
+                        <optgroup label="قراء العراق 🇮🇶">
+                            <option value="https://server10.mp3quran.net/a_klm/" data-img="https://tvquran.com/uploads/authors/images/%D8%B9%D8%A7%D9%85%D8%B1%20%D8%A7%D9%84%D9%83%D8%A7%D8%B8%D9%85%D9%8A.jpg" data-name="عامر الكاظمي">عامر الكاظمي</option>
+                            <option value="https://server6.mp3quran.net/kurdi/" data-img="https://tvquran.com/uploads/authors/images/%D8%B1%D8%B9%D8%AF%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%A7%D9%84%D9%83%D8%B1%D8%AF%D9%8A.jpg" data-name="رعد محمد الكردي">رعد محمد الكردي</option>
+                            <option value="https://server4.mp3quran.net/wld/" data-img="https://tvquran.com/uploads/authors/images/%D9%88%D9%84%D9%8A%D8%AF%20%D8%A5%D8%A8%D8%B1%D8%A7%D9%87%D9%8A%D9%85%20%D8%A7%D9%84%D9%81%D9%84%D9%88%D8%AC%D9%8A.jpg" data-name="وليد الدليمي">وليد الدليمي</option>
+                        </optgroup>
+                        <optgroup label="كبار القراء 🇪🇬">
+                            <option value="https://server7.mp3quran.net/basit/" data-img="https://tvquran.com/uploads/authors/images/%D8%B9%D8%A8%D8%AF%D8%A7%D9%84%D8%A8%D8%A7%D8%B3%D8%B7%20%D8%B9%D8%A8%D8%AF%D8%A7%D9%84%D8%B5%D9%85%D8%AF.jpg" data-name="عبد الباسط عبد الصمد">عبد الباسط عبد الصمد</option>
+                            <option value="https://server10.mp3quran.net/minsh/" data-img="https://tvquran.com/uploads/authors/images/%D9%85%D8%AD%D9%85%D8%AF%20%D8%B5%D8%AF%D9%8A%D9%82%20%D8%A7%D9%84%D9%85%D9%86%D8%B4%D8%A7%D9%88%D9%8A.jpg" data-name="محمد صديق المنشاوي">محمد صديق المنشاوي</option>
+                            <option value="https://server13.mp3quran.net/husr/" data-img="https://tvquran.com/uploads/authors/images/%D9%85%D8%AD%D9%85%D9%88%D8%AF%20%D8%AE%D9%84%D9%8A%D9%84%20%D8%A7%D9%84%D8%AD%D8%B5%D8%B1%D9%8A.jpg" data-name="محمود خليل الحصري">محمود خليل الحصري</option>
+                        </optgroup>
+                        <optgroup label="قراء الخليج العربي 🌴">
+                            <option value="https://server8.mp3quran.net/afs/" data-img="https://tvquran.com/uploads/authors/images/%D9%85%D8%B4%D8%A7%D8%B1%D9%8A%20%D8%A7%D9%84%D8%B9%D9%81%D8%A7%D8%B3%D9%8A.jpg" data-name="مشاري العفاسي" selected>مشاري العفاسي</option>
+                            <option value="https://server12.mp3quran.net/maher/" data-img="https://tvquran.com/uploads/authors/images/%D9%85%D8%A7%D9%87%D8%B1%20%D8%A7%D9%84%D9%85%D8%B9%D9%8A%D9%82%D9%84%D9%8A.jpg" data-name="ماهر المعيقلي">ماهر المعيقلي</option>
+                            <option value="https://server11.mp3quran.net/sds/" data-img="https://tvquran.com/uploads/authors/images/%D8%B9%D8%A8%D8%AF%D8%A7%D9%84%D8%B1%D8%AD%D9%85%D9%86%20%D8%A7%D9%84%D8%B3%D8%AF%D9%8A%D8%B3.jpg" data-name="عبدالرحمن السديس">عبدالرحمن السديس</option>
+                            <option value="https://server11.mp3quran.net/yasser/" data-img="https://tvquran.com/uploads/authors/images/%D9%8A%D8%A7%D8%B3%D8%B1%20%D8%A7%D9%84%D8%AF%D9%88%D8%B3%D8%B1%D9%8A.jpg" data-name="ياسر الدوسري">ياسر الدوسري</option>
+                            <option value="https://server7.mp3quran.net/shur/" data-img="https://tvquran.com/uploads/authors/images/%D8%B3%D8%B9%D9%88%D8%AF%20%D8%A7%D9%84%D8%B4%D8%B1%D9%8A%D9%85.jpg" data-name="سعود الشريم">سعود الشريم</option>
+                            <option value="https://server10.mp3quran.net/s_gmd/" data-img="https://tvquran.com/uploads/authors/images/%D8%B3%D8%B9%D8%AF%20%D8%A7%D9%84%D8%BA%D8%A7%D9%85%D8%AF%D9%8A.jpg" data-name="سعد الغامدي">سعد الغامدي</option>
+                            <option value="https://server10.mp3quran.net/ajm/" data-img="https://tvquran.com/uploads/authors/images/%D8%A3%D8%AD%D9%85%D8%AF%20%D8%A7%D9%84%D8%B9%D8%AC%D9%85%D9%8A.jpg" data-name="أحمد العجمي">أحمد العجمي</option>
+                            <option value="https://server11.mp3quran.net/shatri/" data-img="https://tvquran.com/uploads/authors/images/%D8%A3%D8%A8%D9%88%20%D8%A8%D9%83%D8%B1%20%D8%A7%D9%84%D8%B4%D8%A7%D8%B7%D8%B1%D9%8A.jpg" data-name="أبو بكر الشاطري">أبو بكر الشاطري</option>
+                            <option value="https://server8.mp3quran.net/frs_a/" data-img="https://tvquran.com/uploads/authors/images/%D9%81%D8%A7%D8%B1%D8%B3%20%D8%B9%D8%A8%D8%A7%D8%AF.jpg" data-name="فارس عباد">فارس عباد</option>
+                            <option value="https://server6.mp3quran.net/abkr/" data-img="https://tvquran.com/uploads/authors/images/%D8%A5%D8%AF%D8%B1%D9%8A%D8%B3%20%D8%A3%D8%A8%D9%83%D8%B1.jpg" data-name="إدريس أبكر">إدريس أبكر</option>
+                            <option value="https://server10.mp3quran.net/jleel/" data-img="https://tvquran.com/uploads/authors/images/%D8%AE%D8%A7%D9%84%D8%AF%20%D8%A7%D9%84%D8%AC%D9%84%D9%8A%D9%84.jpg" data-name="خالد الجليل">خالد الجليل</option>
+                        </optgroup>
+                        <optgroup label="قراء شباب ومميزون ✨">
+                            <option value="https://server14.mp3quran.net/abdulrahman_mosad/" data-img="https://tvquran.com/uploads/authors/images/%D8%B9%D8%A8%D8%AF%D8%A7%D9%84%D8%B1%D8%AD%D9%85%D9%86%20%D9%85%D8%B3%D8%B9%D8%AF.jpg" data-name="عبدالرحمن مسعد">عبدالرحمن مسعد</option>
+                            <option value="https://server14.mp3quran.net/islam_sobhi/" data-img="https://tvquran.com/uploads/authors/images/%D8%A5%D8%B3%D9%84%D8%A7%D9%85%20%D8%B5%D8%A8%D8%AD%D9%8A.jpg" data-name="إسلام صبحي">إسلام صبحي</option>
+                            <option value="https://server11.mp3quran.net/hazza/" data-img="https://tvquran.com/uploads/authors/images/%D9%87%D8%B2%D8%A7%D8%B9%20%D8%A7%D9%84%D8%A8%D9%84%D9%88%D8%B4%D9%8A.jpg" data-name="هزاع البلوشي">هزاع البلوشي</option>
+                            <option value="https://server14.mp3quran.net/mansor/" data-img="https://tvquran.com/uploads/authors/images/%D9%85%D9%86%D8%B5%D9%88%D8%B1%20%D8%A7%D9%84%D8%B3%D8%A7%D9%84%D9%85%D9%8A.jpg" data-name="منصور السالمي">منصور السالمي</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Surah Selection -->
+                <div class="relative">
+                    <label class="block text-[10px] font-bold text-emerald-400/80 mb-1 ms-1 uppercase tracking-wider">السورة</label>
+                    <select id="surahSelect" class="w-full bg-black/30 border border-white/10 text-white text-[13px] rounded-2xl focus:ring-1 focus:ring-emerald-500 block px-3 py-2.5 outline-none transition-all">
+                        <!-- Options generated by JS -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Controls (Mobile Sized) -->
+            <div class="flex items-center justify-center gap-5 mb-5 w-full">
+                <!-- Stop Button -->
+                <button id="stopBtn" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-stop text-[11px]"></i>
+                </button>
+
+                <!-- Play/Pause Button -->
+                <button id="playBtn" class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-lg play-btn-glow">
+                    <i class="fa-solid fa-play ml-1" id="playIcon"></i>
+                </button>
+
+                <!-- Mute Button -->
+                <button id="muteBtn" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-volume-high text-[11px]" id="volumeIcon"></i>
+                </button>
+            </div>
+
+            <!-- Volume Slider -->
+            <div class="flex items-center gap-3 px-2 w-full mb-3">
+                <i class="fa-solid fa-volume-low text-[10px] text-gray-500"></i>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+                <i class="fa-solid fa-volume-high text-[10px] text-gray-500"></i>
+            </div>
+            
+            <!-- Status Text -->
+            <div class="text-center mt-2 w-full h-6">
+                <span id="statusText" class="text-[10px] font-bold text-gray-400 bg-white/5 px-3 py-1 rounded-full border border-white/5 inline-block transition-colors duration-300">متوقف</span>
+            </div>
+
+        </div>
+        
+        <!-- Footer -->
+        <p class="text-center text-gray-500/50 text-[10px] mt-4">إذاعة سديم - الفاتحة الى موتى المؤمنين والمؤمنات 2026</p>
+    </div>
+
+    <!-- Imsakia Modal (Mobile Optimized) -->
+    <div id="imsakiaModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-3 opacity-0 transition-opacity duration-300">
+        <div class="glass-card w-full max-w-[380px] rounded-[2rem] overflow-hidden shadow-2xl border border-emerald-500/20 transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]" id="imsakiaContent">
+            
+            <!-- Header -->
+            <div class="bg-gradient-to-l from-emerald-900/80 to-teal-900/80 p-4 border-b border-white/10 flex justify-between items-center shrink-0">
+                <div>
+                    <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-moon text-emerald-400"></i> إمساكية 2026 (العراق)
+                    </h2>
+                    <p class="text-[9px] text-emerald-200/70 mt-1">رمضان 1447 هـ - بتوقيت بغداد</p>
+                </div>
+                <button id="closeImsakiaBtn" class="w-7 h-7 rounded-full bg-white/10 hover:bg-red-500/80 text-white flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+            
+            <!-- Table Container -->
+            <div class="p-0 overflow-y-auto custom-scrollbar bg-black/40 flex-1">
+                <table class="w-full text-center text-[10px] sm:text-xs">
+                    <thead class="bg-black/80 text-emerald-400 sticky top-0 z-10 backdrop-blur-xl border-b border-white/5">
+                        <tr>
+                            <th class="py-2.5 px-1 font-bold">اليوم</th>
+                            <th class="py-2.5 px-1 font-bold">التاريخ</th>
+                            <th class="py-2.5 px-1 font-bold">الفجر</th>
+                            <th class="py-2.5 px-1 font-bold">المغرب</th>
+                        </tr>
+                    </thead>
+                    <tbody id="imsakiaTableBody" class="divide-y divide-white/5 text-gray-300">
+                        <!-- Generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bg-black/80 p-2.5 text-center text-[9px] text-gray-400 border-t border-white/10 shrink-0">
+                ملاحظة: هذه الأوقات تقريبية وقد تختلف بدقائق حسب الرؤية الشرعية.
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audioPlayer"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // UI Elements
+            const audio = document.getElementById('audioPlayer');
+            const playBtn = document.getElementById('playBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const muteBtn = document.getElementById('muteBtn');
+            const playIcon = document.getElementById('playIcon');
+            const volumeIcon = document.getElementById('volumeIcon');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const reciterSelect = document.getElementById('reciterSelect');
+            const surahSelect = document.getElementById('surahSelect');
+            const visualizer = document.getElementById('mainContainer');
+            const statusText = document.getElementById('statusText');
+            
+            // Reciter Info Elements
+            const reciterImg = document.getElementById('reciterImg');
+            const reciterNameDisplay = document.getElementById('reciterNameDisplay');
+            
+            // Clock & Modal Elements
+            const baghdadClock = document.getElementById('baghdadClock');
+            const openImsakiaBtn = document.getElementById('openImsakiaBtn');
+            const closeImsakiaBtn = document.getElementById('closeImsakiaBtn');
+            const imsakiaModal = document.getElementById('imsakiaModal');
+            const imsakiaContent = document.getElementById('imsakiaContent');
+            const imsakiaTableBody = document.getElementById('imsakiaTableBody');
+
+            let isPlaying = false;
+
+            // 114 Surahs Array
+            const surahsNames = [
+                "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
+                "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
+                "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
+                "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
+                "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
+                "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
+                "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج",
+                "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس",
+                "التكوير", "الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد",
+                "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
+                "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر",
+                "المسد", "الإخلاص", "الفلق", "الناس"
+            ];
+
+            // Format Surah ID (e.g., 1 -> 001, 12 -> 012)
+            function formatSurahId(id) {
+                return id.toString().padStart(3, '0');
+            }
+
+            // Populate Surahs Dropdown
+            surahsNames.forEach((name, index) => {
+                const surahId = formatSurahId(index + 1);
+                const option = document.createElement('option');
+                option.value = surahId;
+                option.textContent = `${index + 1}. سورة ${name}`;
+                surahSelect.appendChild(option);
+            });
+
+            // Update Audio Source
+            function updateAudioSource() {
+                const serverUrl = reciterSelect.value;
+                const surahId = surahSelect.value;
+                audio.src = `${serverUrl}${surahId}.mp3`;
+            }
+
+            // Update Reciter Image & Name
+            function updateReciterInfo() {
+                const selectedOption = reciterSelect.options[reciterSelect.selectedIndex];
+                const imgSrc = selectedOption.getAttribute('data-img');
+                const name = selectedOption.getAttribute('data-name');
+                
+                reciterImg.src = imgSrc;
+                reciterImg.onerror = function() {
+                    this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=059669&color=fff&size=256`;
+                };
+                reciterNameDisplay.innerText = name;
+            }
+
+            // Initial Setup
+            updateReciterInfo();
+            updateAudioSource();
+
+            // Baghdad Live Clock
+            function updateClock() {
+                const options = { timeZone: 'Asia/Baghdad', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+                baghdadClock.innerText = new Intl.DateTimeFormat('ar-IQ', options).format(new Date());
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // Handle Play/Pause
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        updateUI();
+                    }).catch(error => {
+                        console.error("Error playing audio:", error);
+                        statusText.innerText = "الملف غير متوفر حالياً لهذا القارئ";
+                        statusText.className = "text-[10px] font-bold text-red-400 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20 inline-block";
+                    });
+                } else {
+                    audio.pause();
+                    isPlaying = false;
+                    updateUI();
+                }
+            });
+
+            // Handle Stop
+            stopBtn.addEventListener('click', () => {
+                audio.pause();
+                audio.currentTime = 0;
+                isPlaying = false;
+                updateUI();
+                statusText.innerText = "متوقف";
+                statusText.className = "text-[10px] font-bold text-gray-400 bg-white/5 px-3 py-1 rounded-full border border-white/5 inline-block";
+            });
+
+            // Handle Change
+            const handleChange = () => {
+                updateReciterInfo();
+                updateAudioSource();
+                if (isPlaying) {
+                    audio.play().catch(() => {
+                        isPlaying = false;
+                        updateUI();
+                        statusText.innerText = "الملف غير متوفر حالياً لهذا القارئ";
+                        statusText.className = "text-[10px] font-bold text-red-400 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20 inline-block";
+                    });
+                } else {
+                    statusText.innerText = "جاهز للتشغيل";
+                    statusText.className = "text-[10px] font-bold text-gray-400 bg-white/5 px-3 py-1 rounded-full border border-white/5 inline-block";
+                }
+            };
+
+            reciterSelect.addEventListener('change', handleChange);
+            surahSelect.addEventListener('change', handleChange);
+
+            // Handle Mute & Volume
+            muteBtn.addEventListener('click', () => {
+                audio.muted = !audio.muted;
+                updateVolumeUI();
+            });
+
+            volumeSlider.addEventListener('input', (e) => {
+                audio.volume = e.target.value;
+                audio.muted = false;
+                updateVolumeUI();
+            });
+
+            // UI Update Functions
+            function updateUI() {
+                if (isPlaying) {
+                    playIcon.classList.remove('fa-play', 'ml-1');
+                    playIcon.classList.add('fa-pause');
+                    visualizer.classList.add('is-playing');
+                    statusText.innerText = `يتم الآن تلاوة سورة ${surahsNames[parseInt(surahSelect.value)-1]}`;
+                    statusText.className = "text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 inline-block";
+                } else {
+                    playIcon.classList.remove('fa-pause');
+                    playIcon.classList.add('fa-play', 'ml-1');
+                    visualizer.classList.remove('is-playing');
+                    if(audio.currentTime > 0 && !audio.ended) {
+                        statusText.innerText = "متوقف مؤقتاً";
+                        statusText.className = "text-[10px] font-bold text-yellow-400 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20 inline-block";
+                    }
+                }
+            }
+
+            function updateVolumeUI() {
+                if (audio.muted || audio.volume === 0) {
+                    volumeIcon.className = "fa-solid fa-volume-xmark text-[11px]";
+                    if(audio.muted) volumeSlider.value = 0;
+                } else if (audio.volume < 0.5) {
+                    volumeIcon.className = "fa-solid fa-volume-low text-[11px]";
+                    volumeSlider.value = audio.volume;
+                } else {
+                    volumeIcon.className = "fa-solid fa-volume-high text-[11px]";
+                    volumeSlider.value = audio.volume;
+                }
+            }
+
+            // Audio Events
+            audio.addEventListener('waiting', () => {
+                statusText.innerText = "جاري التحميل...";
+                statusText.className = "text-[10px] font-bold text-gray-400 bg-white/5 px-3 py-1 rounded-full border border-white/5 inline-block";
+            });
+            audio.addEventListener('playing', updateUI);
+            audio.addEventListener('ended', () => {
+                if(surahSelect.selectedIndex < surahSelect.options.length - 1) {
+                    surahSelect.selectedIndex++;
+                    handleChange();
+                } else {
+                    isPlaying = false;
+                    updateUI();
+                }
+            });
+
+            // Generate Imsakia Data 2026 (Approximate for Baghdad)
+            function generateImsakia() {
+                const startDate = new Date('2026-02-18');
+                const daysOfWeek = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                
+                let fajrTime = new Date('2026-02-18T05:15:00');
+                let maghribTime = new Date('2026-02-18T17:55:00');
+
+                for(let i = 1; i <= 30; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + (i - 1));
+                    
+                    const dayName = daysOfWeek[currentDate.getDay()];
+                    
+                    fajrTime.setMinutes(fajrTime.getMinutes() - (i % 2 === 0 ? 1 : 0));
+                    maghribTime.setMinutes(maghribTime.getMinutes() + (i % 2 === 0 ? 1 : 0));
+
+                    const formatTime = (dateObj) => {
+                        return dateObj.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit', hour12: true });
+                    };
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/5 transition-colors";
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-1">${i} (${dayName})</td>
+                        <td class="py-2.5 px-1 text-gray-400">${currentDate.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit'})}</td>
+                        <td class="py-2.5 px-1 text-emerald-300 font-bold">${formatTime(fajrTime)}</td>
+                        <td class="py-2.5 px-1 text-orange-300 font-bold">${formatTime(maghribTime)}</td>
+                    `;
+                    imsakiaTableBody.appendChild(tr);
+                }
+            }
+            generateImsakia();
+
+            // Imsakia Modal Logic
+            openImsakiaBtn.addEventListener('click', () => {
+                imsakiaModal.classList.remove('hidden');
+                setTimeout(() => {
+                    imsakiaModal.classList.remove('opacity-0');
+                    imsakiaContent.classList.remove('scale-95');
+                    imsakiaContent.classList.add('scale-100');
+                }, 10);
+            });
+
+            closeImsakiaBtn.addEventListener('click', closeImsakia);
+            imsakiaModal.addEventListener('click', (e) => {
+                if(e.target === imsakiaModal) closeImsakia();
+            });
+
+            function closeImsakia() {
+                imsakiaModal.classList.add('opacity-0');
+                imsakiaContent.classList.remove('scale-100');
+                imsakiaContent.classList.add('scale-95');
+                setTimeout(() => {
+                    imsakiaModal.classList.add('hidden');
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>
